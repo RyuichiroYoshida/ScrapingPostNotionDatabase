@@ -12,7 +12,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "npm init -y && tsc --init && npm install typescript -D && npm install ts-node -D",
+	"postCreateCommand": "npm init -y && tsc --init && npm install typescript -D && npm install ts-node -D && npm install superagent --save && npm install @types/superagent -D && npm install cheerio --save && npm install @types/cheerio -D && npm install --save eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
