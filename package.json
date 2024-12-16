@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "@notionhq/client": "^2.2.15",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
     "acorn": "^8.14.0",
@@ -33,7 +34,8 @@
   "scripts": {
     "format": "prettier-eslint --write 'src/**/*.js'",
     "lint": "npx eslint ./src/* -c .ts",
-    "dev": "ts-node ./src/crowllwe.ts"
+    "dev": "ts-node ./src/crowllwe.ts && ts-node ./src/config.ts",
+    "test": "ts-node ./src/notionTest.ts && ts-node ./src/config.ts"
   },
   "keywords": [],
   "author": "",
