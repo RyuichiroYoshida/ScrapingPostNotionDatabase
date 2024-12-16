@@ -1,15 +1,25 @@
 import superagent from "superagent";
 import * as cheerio from "cheerio";
+import { Config } from "./config";
 
 class Crowllwe {
-  private url = "url貼る";
+  private readonly webUrl: string;
+  private readonly notionApiUrl: string;
+  private readonly databaseId: string;
+  private readonly viewId: string;
+
+
   constructor() {
+    this.webUrl = Config.WEB_URL;
+    this.notionApiUrl = Config.NOTION_API_URL;
+    this.databaseId = Config.DATABASE_ID;
+    this.viewId = Config.VIEW_ID;
     this.getRawHtml();
   }
 
   async getRawHtml() {
     try {
-      const result = await superagent.get(this.url);
+      const result = await superagent.get(this.webUrl);
 
       const extractedData = this.extractContent(result.text);
       console.log(extractedData);
@@ -89,6 +99,24 @@ class Crowllwe {
 
     return result;
   }
-}
 
+  // curl(): Promise<string> {
+  //   let postData = {
+  //     parent: this.databaseId,
+  //     properties: {
+  //       企業名: {
+  //         title: [
+  //           {
+  //             text: {
+  //               content: "株式会社Crowllwe",
+  //             },
+  //           },
+  //         ],
+  //       },
+
+  //     },
+  //   };
+  // }
+}
+const params = new Config();
 const crowllwe = new Crowllwe();
