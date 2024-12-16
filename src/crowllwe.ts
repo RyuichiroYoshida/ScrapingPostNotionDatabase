@@ -99,24 +99,7 @@ class Crowllwe {
 
     return result;
   }
-
-  // curl(): Promise<string> {
-  //   let postData = {
-  //     parent: this.databaseId,
-  //     properties: {
-  //       企業名: {
-  //         title: [
-  //           {
-  //             text: {
-  //               content: "株式会社Crowllwe",
-  //             },
-  //           },
-  //         ],
-  //       },
-
-  //     },
-  //   };
-  // }
 }
+
 const params = new Config();
 const crowllwe = new Crowllwe();
