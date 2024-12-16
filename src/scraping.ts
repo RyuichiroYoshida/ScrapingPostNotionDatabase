@@ -2,12 +2,22 @@ import superagent from "superagent";
 import * as cheerio from "cheerio";
 import { Config } from "./config";
 
+/**
+ * @summary URLからHTMLを取得し、スクレイピングする
+ *
+ * @method getRawHtml - 指定されたURLからHTMLを取得し、コンテンツを抽出する
+ * @method extractContent - HTMLからキャプション、メインタイトル、本文を抽出する
+ * @method extractCompanyData - HTMLから会社データを抽出する
+ *
+ * @since 2024-12-17
+ */
 class Scraping {
   private readonly webUrl: string;
   private readonly notionApiUrl: string;
   private readonly databaseId: string;
   private readonly viewId: string;
 
+  // 設定ファイルからパラメータを取得
   constructor() {
     this.webUrl = Config.WEB_URL;
     this.notionApiUrl = Config.NOTION_API_URL;
@@ -16,13 +26,19 @@ class Scraping {
     this.getRawHtml();
   }
 
+  /**
+   * @summary メンバ変数にあるURLからHTMLを取得し、コンテンツを抽出しログに出力する
+   * @returns {void}
+   */
   async getRawHtml() {
     try {
       const result = await superagent.get(this.webUrl);
 
+      // キャプション、メインタイトル、本文を抽出する
       const extractedData = this.extractContent(result.text);
       console.log(extractedData);
 
+      // 会社データを抽出する
       const extractedCompanyData = this.extractCompanyData(result.text);
       console.log(extractedCompanyData);
     } catch (error) {
@@ -30,6 +46,11 @@ class Scraping {
     }
   }
 
+  /**
+   * @summary HTMLからキャプション、メインタイトル、本文を抽出する
+   * @param {string} html - 抽出対象のHTML
+   * @returns {Record<string, string | string[]>} - 抽出したコンテンツ
+   */
   extractContent(html: string): Record<string, string | string[]> {
     const $ = cheerio.load(html);
     const result: Record<string, string | string[]> = {};
@@ -60,6 +81,11 @@ class Scraping {
     return result;
   }
 
+  /**
+   * @summary HTMLから会社データを抽出する
+   * @param {string} html - 抽出対象のHTML
+   * @returns {Record<string, string | string[]>} - 抽出した会社データ
+   */
   extractCompanyData(html: string): Record<string, string | string[]> {
     const $ = cheerio.load(html);
     const result: Record<string, string | string[]> = {};
