@@ -6,10 +6,19 @@ import {
   isNotionClientError,
 } from "@notionhq/client";
 
+/**
+ * @summary Notionのデータベースにアクセスする
+ *
+ * @method getDatabase - データベースを取得する
+ * @method createDatabase - データベースを作成する
+ *
+ * @since 2024-12-17
+ */
 class NotionTest {
   private readonly notionToken: string;
   private readonly databaseId: string;
 
+  // 設定ファイルからパラメータを取得
   constructor() {
     this.notionToken = Config.NOTION_TOKEN;
     this.databaseId = Config.DATABASE_ID;
@@ -17,6 +26,10 @@ class NotionTest {
     this.initialize();
   }
 
+  /**
+   * @summary Notionのデータベースを初期化する
+   * @returns void
+   */
   async initialize() {
     const client = new Client({
       auth: this.notionToken,
@@ -26,6 +39,11 @@ class NotionTest {
     await this.createDatabase(client);
   }
 
+  /**
+   * @summary データベースを取得する
+   * @param {any} client - Notionのクライアント
+   * @returns void
+   */
   async getDatabase(client: any) {
     try {
       const response = await client.databases.retrieve({
@@ -52,6 +70,11 @@ class NotionTest {
     }
   }
 
+  /**
+   * @summary データベースを作成する
+   * @param {any} client - Notionのクライアント
+   * @returns void
+   */
   async createDatabase(client: any) {
     try {
       const response = await client.pages.create({

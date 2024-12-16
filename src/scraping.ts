@@ -20,7 +20,7 @@ class Scraping {
   // 設定ファイルからパラメータを取得
   constructor() {
     this.webUrl = Config.WEB_URL;
-    this.notionApiUrl = Config.NOTION_API_URL;
+    this.notionApiUrl = Config.NOTION_PAGE_URL;
     this.databaseId = Config.DATABASE_ID;
     this.viewId = Config.VIEW_ID;
     this.getRawHtml();
@@ -28,7 +28,7 @@ class Scraping {
 
   /**
    * @summary メンバ変数にあるURLからHTMLを取得し、コンテンツを抽出しログに出力する
-   * @returns {void}
+   * @returns void
    */
   async getRawHtml() {
     try {
