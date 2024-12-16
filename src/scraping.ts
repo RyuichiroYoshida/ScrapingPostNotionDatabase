@@ -2,12 +2,11 @@ import superagent from "superagent";
 import * as cheerio from "cheerio";
 import { Config } from "./config";
 
-class Crowllwe {
+class Scraping {
   private readonly webUrl: string;
   private readonly notionApiUrl: string;
   private readonly databaseId: string;
   private readonly viewId: string;
-
 
   constructor() {
     this.webUrl = Config.WEB_URL;
@@ -102,4 +101,4 @@ class Crowllwe {
 }
 
 const params = new Config();
-const crowllwe = new Crowllwe();
+const scraping = new Scraping();
