@@ -1,6 +1,7 @@
 import superagent from "superagent";
 import * as cheerio from "cheerio";
 import { Config } from "./config";
+import { NotionManager } from "./notionManager";
 
 /**
  * @summary URLからHTMLを取得し、スクレイピングする
@@ -8,8 +9,6 @@ import { Config } from "./config";
  * @method getRawHtml - 指定されたURLからHTMLを取得し、コンテンツを抽出する
  * @method extractContent - HTMLからキャプション、メインタイトル、本文を抽出する
  * @method extractCompanyData - HTMLから会社データを抽出する
- *
- * @since 2024-12-17
  */
 class Scraping {
   private readonly webUrl: string;
