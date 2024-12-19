@@ -6,6 +6,14 @@ import {
   isNotionClientError,
 } from "@notionhq/client";
 
+type NotionPostData = {
+  CompanyName: string;
+  CompanyMessage: string;
+  Business: string;
+  CompanyUrl: string;
+  Location: string;
+};
+
 /**
  * @summary Notionのデータベースにアクセスする
  *
@@ -27,8 +35,8 @@ class NotionTest {
   }
 
   /**
-   * @summary Notionのデータベースを初期化する
-   * @returns void
+   * Description
+   * @returns {void}
    */
   async initialize() {
     const client = new Client({
@@ -71,11 +79,12 @@ class NotionTest {
   }
 
   /**
-   * @summary データベースを作成する
-   * @param {any} client - Notionのクライアント
-   * @returns void
+   * Description データベースを作成する
+   * @param {any} client:any - Notionのクライアント
+   * @param {NotionPostData} content:NotionPostData - データベースの内容
+   * @returns {Promise<any>} response:any - レスポンス
    */
-  async createDatabase(client: any) {
+  async createDatabase(client: any, content: NotionPostData): Promise<any> {
     try {
       const response = await client.pages.create({
         parent: {
@@ -83,42 +92,31 @@ class NotionTest {
         },
         properties: {
           会社HP: {
-            url: null,
+            url: content.CompanyUrl,
           },
-          クライアント: {
-            multi_select: [
-              {
-                name: "C#",
-              },
-            ],
-          },
-          会社がやってる事: {
+          事業内容: {
             rich_text: [
               {
                 text: {
-                  content: "Hoge",
+                  content: content.Business,
                 },
               },
             ],
-          },
-          サーバー: {
-            multi_select: [
-              {
-                name: "C#",
-              },
-            ],
-          },
-          面接対策ページ: {
-            url: null,
-          },
-          採用ページ: {
-            url: null,
           },
           所在地: {
             rich_text: [
               {
                 text: {
-                  content: "Hoge",
+                  content: content.Location,
+                },
+              },
+            ],
+          },
+          テキスト: {
+            rich_text: [
+              {
+                text: {
+                  content: content.CompanyMessage,
                 },
               },
             ],
@@ -127,7 +125,7 @@ class NotionTest {
             title: [
               {
                 text: {
-                  content: "Hoge",
+                  content: content.CompanyName,
                 },
               },
             ],
@@ -135,6 +133,7 @@ class NotionTest {
         },
       });
       console.log(response);
+      return response;
     } catch (error) {
       console.error("Failed Create Database:", error);
     }
