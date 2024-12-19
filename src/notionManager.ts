@@ -6,7 +6,7 @@ import {
   isNotionClientError,
 } from "@notionhq/client";
 
-type NotionPostData = {
+export type NotionPostData = {
   CompanyName: string;
   CompanyMessage: string;
   Business: string;
@@ -19,10 +19,8 @@ type NotionPostData = {
  *
  * @method getDatabase - データベースを取得する
  * @method createDatabase - データベースを作成する
- *
- * @since 2024-12-17
  */
-class NotionTest {
+export class NotionManager {
   private readonly notionToken: string;
   private readonly databaseId: string;
 
@@ -35,8 +33,7 @@ class NotionTest {
   }
 
   /**
-   * Description
-   * @returns {void}
+   * @summary 初期化処理
    */
   async initialize() {
     const client = new Client({
@@ -44,13 +41,11 @@ class NotionTest {
     });
 
     //await this.getDatabase(client);
-    await this.createDatabase(client);
   }
 
   /**
    * @summary データベースを取得する
    * @param {any} client - Notionのクライアント
-   * @returns void
    */
   async getDatabase(client: any) {
     try {
@@ -79,12 +74,11 @@ class NotionTest {
   }
 
   /**
-   * Description データベースを作成する
+   * @summary データベースを作成する
    * @param {any} client:any - Notionのクライアント
    * @param {NotionPostData} content:NotionPostData - データベースの内容
-   * @returns {Promise<any>} response:any - レスポンス
    */
-  async createDatabase(client: any, content: NotionPostData): Promise<any> {
+  async createDatabase(client: any, content: NotionPostData) {
     try {
       const response = await client.pages.create({
         parent: {
@@ -133,7 +127,6 @@ class NotionTest {
         },
       });
       console.log(response);
-      return response;
     } catch (error) {
       console.error("Failed Create Database:", error);
     }
@@ -141,4 +134,4 @@ class NotionTest {
 }
 
 const params = new Config();
-const notionTest = new NotionTest();
+const notionTest = new NotionManager();
