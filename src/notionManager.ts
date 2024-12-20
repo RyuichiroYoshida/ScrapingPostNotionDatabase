@@ -24,23 +24,16 @@ export class NotionManager {
   private readonly notionToken: string;
   private readonly databaseId: string;
 
+  private client: Client;
+
   // 設定ファイルからパラメータを取得
   constructor() {
     this.notionToken = Config.NOTION_TOKEN;
     this.databaseId = Config.DATABASE_ID;
 
-    this.initialize();
-  }
-
-  /**
-   * @summary 初期化処理
-   */
-  async initialize() {
-    const client = new Client({
+    this.client = new Client({
       auth: this.notionToken,
     });
-
-    //await this.getDatabase(client);
   }
 
   /**
