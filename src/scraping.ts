@@ -135,8 +135,10 @@ class Scraping {
     results.CompanyName = companyName;
     results.Establishment = result["設立"] as string;
     results.CapitalStock = result["資本金"] as string;
-    results.Worker = result["従業員"] as string;
-    results.Location = result["事業所"] as string;
+    results.Location = result["本社所在地"] as string;
+    results.Worker = result["従業員"]
+      ? (result["従業員"] as string)
+      : (result["従業員数"] as string);
 
     return results;
   }
