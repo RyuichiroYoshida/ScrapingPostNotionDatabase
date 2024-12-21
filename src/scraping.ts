@@ -33,6 +33,8 @@ class Scraping {
 
       // 会社データを抽出する
       const extractedCompanyData = this.extractCompanyData(result.text);
+
+      this.notionManager.createDatabase(extractedCompanyData, extractedData);
     } catch (error) {
       console.error("Error fetching the HTML:", error);
     }
