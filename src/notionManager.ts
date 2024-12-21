@@ -96,7 +96,7 @@ export class NotionManager {
           会社HP: {
             url: "none",
           },
-          所在地: {
+          本庁所在地: {
             rich_text: [
               {
                 text: {
