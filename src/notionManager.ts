@@ -1,4 +1,3 @@
-import { get } from "cheerio/dist/commonjs/api/traversing";
 import { Config } from "./config";
 import {
   APIErrorCode,
@@ -28,7 +27,7 @@ export class NotionManager {
   private client: any;
 
   // 設定ファイルからパラメータを取得
-  constructor() {
+  public constructor() {
     this.notionToken = Config.NOTION_TOKEN;
     this.databaseId = Config.DATABASE_ID;
 
@@ -40,7 +39,7 @@ export class NotionManager {
   /**
    * @summary データベースを取得する
    */
-  async getDatabase() {
+  public async getDatabase() {
     try {
       const response = await this.client.databases.retrieve({
         database_id: this.databaseId,
@@ -70,7 +69,7 @@ export class NotionManager {
    * @summary データベースを作成する
    * @param {NotionPostData} content:NotionPostData - データベースの内容
    */
-  async createDatabase(content: NotionPostData) {
+  public async createDatabase(content: NotionPostData) {
     try {
       const response = await this.client.pages.create({
         parent: {
