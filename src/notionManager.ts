@@ -8,12 +8,12 @@ import {
 
 // TODO: まだ取得できていないデータ
 type ToDoData = {
-  CompanyName: string;
   CompanyUrl: string;
 };
 
 // Notionのデータベースに送信するデータ
 export type CompanyData = {
+  CompanyName: string;
   Establishment: string;
   CapitalStock: string;
   Worker: string;
@@ -109,7 +109,7 @@ export class NotionManager {
             title: [
               {
                 text: {
-                  content: "none",
+                  content: content.CompanyName,
                 },
               },
             ],

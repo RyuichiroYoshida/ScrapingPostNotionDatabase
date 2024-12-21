@@ -83,13 +83,14 @@ class Scraping {
   /**
    * @summary HTMLから会社データを抽出する
    * @param {string} html - 抽出対象のHTML
-   * @returns {Record<string, string | string[]>} - 抽出した会社データ
+   * @returns {CompanyData} - 抽出した会社データ
    */
   private extractCompanyData(html: string): CompanyData {
     const $ = cheerio.load(html);
     const result: Record<string, string | string[]> = {};
 
     let results: CompanyData = {
+      CompanyName: "",
       Establishment: "",
       CapitalStock: "",
       Worker: "",
@@ -128,6 +129,10 @@ class Scraping {
       result["沿革"] = history;
     }
 
+    // 会社名を抽出
+    const companyName = $("#companyHead .heading1 h1").text().trim();
+
+    results.CompanyName = companyName;
     results.Establishment = result["設立"] as string;
     results.CapitalStock = result["資本金"] as string;
     results.Worker = result["従業員"] as string;
