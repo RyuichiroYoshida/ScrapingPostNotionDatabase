@@ -6,7 +6,8 @@ import {
   isNotionClientError,
 } from "@notionhq/client";
 
-export type NotionPostData = {
+// Notionのデータベースに送信するデータ
+export type CompanyData = {
   CompanyName: string;
   CompanyMessage: string;
   Business: string;
@@ -14,11 +15,18 @@ export type NotionPostData = {
   Location: string;
 };
 
+// Notionのデータベース内のページに書くデータ
+export type CompanyMessage = {
+  Captions: string[];
+  MainTitle: string;
+  BodyText: string;
+};
+
 /**
- * @summary Notionのデータベースにアクセスする
- *
- * @method getDatabase - データベースを取得する
- * @method createDatabase - データベースを作成する
+ * @summary NotionApiを操作するクラス
+ * @constructor 環境変数の設定とNotionのクライアントを初期化
+ * @method getDatabase - データベースを取得
+ * @method createDatabase - データベースを作成
  */
 export class NotionManager {
   private readonly notionToken: string;
@@ -37,9 +45,9 @@ export class NotionManager {
   }
 
   /**
-   * @summary データベースを取得する
+   * @summary データベースを取得する (テスト用)
    */
-  public async getDatabase() {
+  public async testGetDatabase() {
     try {
       const response = await this.client.databases.retrieve({
         database_id: this.databaseId,
@@ -67,9 +75,10 @@ export class NotionManager {
 
   /**
    * @summary データベースを作成する
-   * @param {NotionPostData} content:NotionPostData - データベースの内容
+   * @param {CompanyData} content:NotionPostData - データベースの内容
+   * @param {CompanyMessage} childContent:CompanyMessage - 子ページの内容
    */
-  public async createDatabase(content: NotionPostData) {
+  public async createDatabase(content: CompanyData, childContent: CompanyMessage) {
     try {
       const response = await this.client.pages.create({
         parent: {
@@ -117,7 +126,7 @@ export class NotionManager {
           },
         },
       });
-      await this.createChildPage(response.id);
+      await this.createChildPage(childContent, response.id);
 
       console.log(response);
     } catch (error) {
@@ -127,19 +136,20 @@ export class NotionManager {
 
   /**
    * @summary データベース内に子ページを作成する
+   * @param {CompanyMessage} messages - 子ページに書き込む内容
    * @param {any} pageId:string
    */
-  private async createChildPage(pageId: string) {
+  private async createChildPage(messages: CompanyMessage, pageId: string) {
     try {
       const res = await this.client.blocks.children.append({
         block_id: pageId,
         children: [
           {
-            heading_2: {
+            heading_3: {
               rich_text: [
                 {
                   text: {
-                    content: "header",
+                    content: "MainTitle",
                   },
                 },
               ],
@@ -150,7 +160,51 @@ export class NotionManager {
               rich_text: [
                 {
                   text: {
-                    content: "msg",
+                    content: messages.MainTitle,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            heading_3: {
+              rich_text: [
+                {
+                  text: {
+                    content: "Captions",
+                  },
+                },
+              ],
+            },
+          },
+          {
+            paragraph: {
+              rich_text: [
+                {
+                  text: {
+                    content: messages.Captions.join("\n"),
+                  },
+                },
+              ],
+            },
+          },
+          {
+            heading_3: {
+              rich_text: [
+                {
+                  text: {
+                    content: "BodyText",
+                  },
+                },
+              ],
+            },
+          },
+          {
+            paragraph: {
+              rich_text: [
+                {
+                  text: {
+                    content: messages.BodyText,
                   },
                 },
               ],
