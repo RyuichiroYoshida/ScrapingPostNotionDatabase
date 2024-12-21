@@ -117,9 +117,50 @@ export class NotionManager {
           },
         },
       });
+      await this.createChildPage(response.id);
+
       console.log(response);
     } catch (error) {
       console.error("Failed Create Database:", error);
+    }
+  }
+
+  /**
+   * @summary データベース内に子ページを作成する
+   * @param {any} pageId:string
+   */
+  private async createChildPage(pageId: string) {
+    try {
+      const res = await this.client.blocks.children.append({
+        block_id: pageId,
+        children: [
+          {
+            heading_2: {
+              rich_text: [
+                {
+                  text: {
+                    content: "header",
+                  },
+                },
+              ],
+            },
+          },
+          {
+            paragraph: {
+              rich_text: [
+                {
+                  text: {
+                    content: "msg",
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Failed Create Page:", error);
+      return "";
     }
   }
 }
