@@ -30,11 +30,9 @@ class Scraping {
 
       // キャプション、メインタイトル、本文を抽出する
       const extractedData = this.extractContent(result.text);
-      console.log(extractedData);
 
       // 会社データを抽出する
       const extractedCompanyData = this.extractCompanyData(result.text);
-      console.log(extractedCompanyData);
     } catch (error) {
       console.error("Error fetching the HTML:", error);
     }
@@ -48,7 +46,7 @@ class Scraping {
   private extractContent(html: string): CompanyMessage {
     const $ = cheerio.load(html);
     // Notion子ページに記述するデータ
-    let results:CompanyMessage = {
+    let results: CompanyMessage = {
       Captions: [],
       MainTitle: "",
       BodyText: "",
@@ -85,15 +83,14 @@ class Scraping {
    * @param {string} html - 抽出対象のHTML
    * @returns {Record<string, string | string[]>} - 抽出した会社データ
    */
-  private extractCompanyData(html: string): Record<string, string | string[]> {
+  private extractCompanyData(html: string): CompanyData {
     const $ = cheerio.load(html);
     const result: Record<string, string | string[]> = {};
 
-    let results:CompanyData = {
-      CompanyName: "",
-      CompanyMessage: "",
-      Business: "",
-      CompanyUrl: "",
+    let results: CompanyData = {
+      Establishment: "",
+      CapitalStock: "",
+      Worker: "",
       Location: "",
     };
 
@@ -129,7 +126,12 @@ class Scraping {
       result["沿革"] = history;
     }
 
-    return result;
+    results.Establishment = result["設立"] as string;
+    results.CapitalStock = result["資本金"] as string;
+    results.Worker = result["従業員"] as string;
+    results.Location = result["事業所"] as string;
+
+    return results;
   }
 }
 
