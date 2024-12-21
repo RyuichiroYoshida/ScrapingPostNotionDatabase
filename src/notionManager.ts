@@ -6,12 +6,17 @@ import {
   isNotionClientError,
 } from "@notionhq/client";
 
+// TODO: まだ取得できていないデータ
+type ToDoData = {
+  CompanyName: string;
+  CompanyUrl: string;
+};
+
 // Notionのデータベースに送信するデータ
 export type CompanyData = {
-  CompanyName: string;
-  CompanyMessage: string;
-  Business: string;
-  CompanyUrl: string;
+  Establishment: string;
+  CapitalStock: string;
+  Worker: string;
   Location: string;
 };
 
@@ -78,7 +83,10 @@ export class NotionManager {
    * @param {CompanyData} content:NotionPostData - データベースの内容
    * @param {CompanyMessage} childContent:CompanyMessage - 子ページの内容
    */
-  public async createDatabase(content: CompanyData, childContent: CompanyMessage) {
+  public async createDatabase(
+    content: CompanyData,
+    childContent: CompanyMessage
+  ) {
     try {
       const response = await this.client.pages.create({
         parent: {
@@ -86,16 +94,7 @@ export class NotionManager {
         },
         properties: {
           会社HP: {
-            url: content.CompanyUrl,
-          },
-          事業内容: {
-            rich_text: [
-              {
-                text: {
-                  content: content.Business,
-                },
-              },
-            ],
+            url: "none",
           },
           所在地: {
             rich_text: [
@@ -106,20 +105,38 @@ export class NotionManager {
               },
             ],
           },
-          テキスト: {
-            rich_text: [
-              {
-                text: {
-                  content: content.CompanyMessage,
-                },
-              },
-            ],
-          },
           企業名: {
             title: [
               {
                 text: {
-                  content: content.CompanyName,
+                  content: "none",
+                },
+              },
+            ],
+          },
+          従業員数: {
+            rich_text: [
+              {
+                text: {
+                  content: content.Worker,
+                },
+              },
+            ],
+          },
+          資本金: {
+            rich_text: [
+              {
+                text: {
+                  content: content.CapitalStock,
+                },
+              },
+            ],
+          },
+          設立: {
+            rich_text: [
+              {
+                text: {
+                  content: content.Establishment,
                 },
               },
             ],
@@ -127,8 +144,6 @@ export class NotionManager {
         },
       });
       await this.createChildPage(childContent, response.id);
-
-      console.log(response);
     } catch (error) {
       console.error("Failed Create Database:", error);
     }
