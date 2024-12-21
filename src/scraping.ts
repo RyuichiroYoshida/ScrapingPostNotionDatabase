@@ -1,7 +1,7 @@
 import superagent from "superagent";
 import * as cheerio from "cheerio";
 import { Config } from "./config";
-import { NotionManager } from "./notionManager";
+import { NotionManager, CompanyData, CompanyMessage } from "./notionManager";
 
 /**
  * @summary URLからHTMLを取得し、スクレイピングする
@@ -12,24 +12,19 @@ import { NotionManager } from "./notionManager";
  */
 class Scraping {
   private readonly webUrl: string;
-  private readonly notionApiUrl: string;
-  private readonly databaseId: string;
-  private readonly viewId: string;
+
+  private readonly notionManager = new NotionManager();
 
   // 設定ファイルからパラメータを取得
-  constructor() {
+  public constructor() {
     this.webUrl = Config.WEB_URL;
-    this.notionApiUrl = Config.NOTION_PAGE_URL;
-    this.databaseId = Config.DATABASE_ID;
-    this.viewId = Config.VIEW_ID;
     this.getRawHtml();
   }
 
   /**
    * @summary メンバ変数にあるURLからHTMLを取得し、コンテンツを抽出しログに出力する
-   * @returns void
    */
-  async getRawHtml() {
+  private async getRawHtml() {
     try {
       const result = await superagent.get(this.webUrl);
 
@@ -48,11 +43,16 @@ class Scraping {
   /**
    * @summary HTMLからキャプション、メインタイトル、本文を抽出する
    * @param {string} html - 抽出対象のHTML
-   * @returns {Record<string, string | string[]>} - 抽出したコンテンツ
+   * @returns {CompanyMessage} - 抽出したコンテンツを整形したデータ
    */
-  extractContent(html: string): Record<string, string | string[]> {
+  private extractContent(html: string): CompanyMessage {
     const $ = cheerio.load(html);
-    const result: Record<string, string | string[]> = {};
+    // Notion子ページに記述するデータ
+    let results:CompanyMessage = {
+      Captions: [],
+      MainTitle: "",
+      BodyText: "",
+    };
 
     // キャプションの抽出 (画像の下にあるテキスト)
     const captions: string[] = [];
@@ -62,22 +62,22 @@ class Scraping {
       }
     );
     if (captions.length > 0) {
-      result["captions"] = captions;
+      results.Captions = captions;
     }
 
     // メインタイトルの抽出
     const mainTitle = $("#advanceInfoTitle").text().trim();
     if (mainTitle) {
-      result["mainTitle"] = mainTitle;
+      results.MainTitle = mainTitle;
     }
 
     // セクション全体の本文を抽出
     const bodyText = $("#advanceInfoBody").text().trim();
     if (bodyText) {
-      result["bodyText"] = bodyText.replace(/\s+/g, " "); // 改行や余分なスペースを除去
+      results.BodyText = bodyText.replace(/\s+/g, " "); // 改行や余分なスペースを除去
     }
 
-    return result;
+    return results;
   }
 
   /**
@@ -85,9 +85,17 @@ class Scraping {
    * @param {string} html - 抽出対象のHTML
    * @returns {Record<string, string | string[]>} - 抽出した会社データ
    */
-  extractCompanyData(html: string): Record<string, string | string[]> {
+  private extractCompanyData(html: string): Record<string, string | string[]> {
     const $ = cheerio.load(html);
     const result: Record<string, string | string[]> = {};
+
+    let results:CompanyData = {
+      CompanyName: "",
+      CompanyMessage: "",
+      Business: "",
+      CompanyUrl: "",
+      Location: "",
+    };
 
     // 上部のテーブルデータを抽出
     $(".dataTableTop .item").each((_, element) => {
