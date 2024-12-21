@@ -132,14 +132,18 @@ class Scraping {
     // 会社名を抽出
     const companyName = $("#companyHead .heading1 h1").text().trim();
 
-    results.CompanyName = companyName;
-    results.Establishment = result["設立"] as string;
-    results.CapitalStock = result["資本金"] as string;
-    results.Location = result["本社所在地"] as string;
-    results.Worker = result["従業員"]
-      ? (result["従業員"] as string)
-      : (result["従業員数"] as string);
-
+    // validation
+    try {
+      results.CompanyName = companyName;
+      results.Establishment = result["設立"] as string;
+      results.CapitalStock = result["資本金"] as string;
+      results.Location = result["本社所在地"] as string;
+      results.Worker = result["従業員"]
+        ? (result["従業員"] as string)
+        : (result["従業員数"] as string);
+    } catch (error) {
+      console.error("Failed to Validation:", error);
+    }
     return results;
   }
 }
