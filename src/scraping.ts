@@ -1,22 +1,48 @@
 import superagent from "superagent";
 import * as cheerio from "cheerio";
 import { NotionManager, CompanyData, CompanyMessage } from "./notionManager";
+import { Config } from "./config";
 
 /**
  * @summary URLからHTMLを取得し、スクレイピングする
  *
- * @method fetchPageUrls - 指定されたURLにアクセスし、HTMLからそれぞれのページURLを取得する
+ * @method fetchPageUrls - 指定されたURLにアクセスし、HTMLからそれぞれのページURLとタイトルを取得する
  * @method runScraping - 指定されたURLからHTMLを取得し、コンテンツを抽出する
  * @method extractContent - HTMLからキャプション、メインタイトル、本文を抽出する
  * @method extractCompanyData - HTMLから会社データを抽出する
  */
 export class Scraping {
-  private readonly notionManager = new NotionManager();
+  private readonly notionManager: NotionManager;
+  private pageUrls: { href: string; text: string }[] = [];
 
+  constructor() {
+    this.notionManager = new NotionManager();
+    this.fetchPageUrls(Config.WEB_URL);
+  }
+
+  /**
+   * @summary 指定されたURLにアクセスし、HTMLからそれぞれのページURLを取得する
+   * @param {string} webUrl - 取得対象のURL
+   */
   public async fetchPageUrls(webUrl: string) {
     try {
       const html = await superagent.get(webUrl);
-    } catch (error) {}
+
+      // CheerioでHTMLをパース
+      const $ = cheerio.load(html.text);
+
+      $("a.js-add-examination-list-text").each((_, element) => {
+        const href = $(element).attr("href") || "";
+        const text = $(element).text().trim();
+
+        // outline.htmlを含むリンクだけを対象にする
+        if (href.includes("outline.html")) {
+          this.pageUrls.push({ href, text });
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching the HTML:", error);
+    }
   }
 
   /**
@@ -149,3 +175,4 @@ export class Scraping {
 }
 
 const scraping = new Scraping();
+const config = new Config();
