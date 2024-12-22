@@ -13,7 +13,7 @@ import { Config } from "./config";
  */
 export class Scraping {
   private readonly notionManager: NotionManager;
-  private pageUrls: { href: string; text: string }[] = [];
+  private pageUrls: { url: string; pageName: string }[] = [];
 
   constructor() {
     this.notionManager = new NotionManager();
@@ -37,7 +37,7 @@ export class Scraping {
 
         // outline.htmlを含むリンクだけを対象にする
         if (href.includes("outline.html")) {
-          this.pageUrls.push({ href, text });
+          this.pageUrls.push({ url: href, pageName: text });
         }
       });
     } catch (error) {
@@ -48,10 +48,10 @@ export class Scraping {
   /**
    * @summary メンバ変数にあるURLからHTMLを取得し、コンテンツを抽出しNotion操作クラスに送信する
    */
-  public async runScraping(pageUrl: string) {
+  public async runScraping(pageData: { url: string; pageName: string }) {
     // TODO: try-catchのエラーハンドリングを追加
     try {
-      const html = await superagent.get(pageUrl);
+      const html = await superagent.get(pageData.url);
 
       // キャプション、メインタイトル、本文を抽出する
       const extractedMsg = this.extractContent(html.text);
@@ -153,9 +153,6 @@ export class Scraping {
     if (history.length > 0) {
       result["沿革"] = history;
     }
-
-    // 会社名を抽出
-    const companyName = $("#companyHead .heading1 h1").text().trim();
 
     // TODO: Validation失敗時の処理を追加
     // validation
