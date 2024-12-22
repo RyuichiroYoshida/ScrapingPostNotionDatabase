@@ -64,7 +64,7 @@ export class Scraping {
 
       this.notionManager.createDatabase(extractedData, extractedMsg);
     } catch (error) {
-      console.error("Error fetching the HTML:", error);
+      console.log("Error fetching the HTML:", error);
     }
   }
 
