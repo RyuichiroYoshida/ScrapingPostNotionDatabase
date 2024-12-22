@@ -13,20 +13,21 @@ import { Config } from "./config";
  */
 export class Scraping {
   private readonly notionManager: NotionManager;
-  public pageUrls: { url: string; pageName: string }[] = [];
 
   constructor() {
     this.notionManager = new NotionManager();
-    this.fetchPageUrls(Config.WEB_URL);
+    // データ取得時のみ実行
+    // this.fetchPageUrls(Config.WEB_URL);
   }
 
   /**
-   * @summary 指定されたURLにアクセスし、HTMLからそれぞれのページURLを取得する
+   * @summary 指定されたURLにアクセスし、HTMLからそれぞれのページURLを取得する (一度だけ実行しコンソールのログを手動でConfigにコピーする)
    * @param {string} webUrl - 取得対象のURL
    */
   public async fetchPageUrls(webUrl: string) {
     try {
       const html = await superagent.get(webUrl);
+      const results: { url: string; pageName: string }[] = [];
 
       // CheerioでHTMLをパース
       const $ = cheerio.load(html.text);
@@ -37,9 +38,10 @@ export class Scraping {
 
         // outline.htmlを含むリンクだけを対象にする
         if (href.includes("outline.html")) {
-          this.pageUrls.push({ url: href, pageName: text });
+          results.push({ url: href, pageName: text });
         }
       });
+      console.log(results);
     } catch (error) {
       console.error("Error fetching the HTML:", error);
     }
@@ -47,20 +49,19 @@ export class Scraping {
 
   /**
    * @summary メンバ変数にあるURLからHTMLを取得し、コンテンツを抽出しNotion操作クラスに送信する
+   * @param {string} url - 取得対象のURL
+   * @param {string} name - 会社名
    */
-  public async runScraping(pageData: { url: string; pageName: string }) {
+  public async runScraping(url: string, name: string) {
     // TODO: try-catchのエラーハンドリングを追加
     try {
-      const html = await superagent.get(pageData.url);
+      const html = await superagent.get(url);
 
       // キャプション、メインタイトル、本文を抽出する
       const extractedMsg = this.extractContent(html.text);
 
       // 会社データを抽出する
-      const extractedData = this.extractCompanyData(
-        html.text,
-        pageData.pageName
-      );
+      const extractedData = this.extractCompanyData(html.text, name);
 
       this.notionManager.createDatabase(extractedData, extractedMsg);
     } catch (error) {
