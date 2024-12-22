@@ -5,7 +5,7 @@ import { NotionManager, CompanyData, CompanyMessage } from "./notionManager";
 /**
  * @summary URLからHTMLを取得し、スクレイピングする
  *
- * @method getRawHtml - 指定されたURLからHTMLを取得し、コンテンツを抽出する
+ * @method runScraping - 指定されたURLからHTMLを取得し、コンテンツを抽出する
  * @method extractContent - HTMLからキャプション、メインタイトル、本文を抽出する
  * @method extractCompanyData - HTMLから会社データを抽出する
  */
@@ -13,9 +13,10 @@ export class Scraping {
   private readonly notionManager = new NotionManager();
 
   /**
-   * @summary メンバ変数にあるURLからHTMLを取得し、コンテンツを抽出しログに出力する
+   * @summary メンバ変数にあるURLからHTMLを取得し、コンテンツを抽出しNotion操作クラスに送信する
    */
-  public async getRawHtml(webUrl: string) {
+  public async runScraping(webUrl: string) {
+    // TODO: try-catchのエラーハンドリングを追加
     try {
       const result = await superagent.get(webUrl);
 
