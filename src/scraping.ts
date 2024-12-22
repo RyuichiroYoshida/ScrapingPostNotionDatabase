@@ -5,6 +5,7 @@ import { NotionManager, CompanyData, CompanyMessage } from "./notionManager";
 /**
  * @summary URLからHTMLを取得し、スクレイピングする
  *
+ * @method fetchPageUrls - 指定されたURLにアクセスし、HTMLからそれぞれのページURLを取得する
  * @method runScraping - 指定されたURLからHTMLを取得し、コンテンツを抽出する
  * @method extractContent - HTMLからキャプション、メインタイトル、本文を抽出する
  * @method extractCompanyData - HTMLから会社データを抽出する
@@ -12,21 +13,27 @@ import { NotionManager, CompanyData, CompanyMessage } from "./notionManager";
 export class Scraping {
   private readonly notionManager = new NotionManager();
 
+  public async fetchPageUrls(webUrl: string) {
+    try {
+      const html = await superagent.get(webUrl);
+    } catch (error) {}
+  }
+
   /**
    * @summary メンバ変数にあるURLからHTMLを取得し、コンテンツを抽出しNotion操作クラスに送信する
    */
-  public async runScraping(webUrl: string) {
+  public async runScraping(pageUrl: string) {
     // TODO: try-catchのエラーハンドリングを追加
     try {
-      const result = await superagent.get(webUrl);
+      const html = await superagent.get(pageUrl);
 
       // キャプション、メインタイトル、本文を抽出する
-      const extractedData = this.extractContent(result.text);
+      const extractedMsg = this.extractContent(html.text);
 
       // 会社データを抽出する
-      const extractedCompanyData = this.extractCompanyData(result.text);
+      const extractedData = this.extractCompanyData(html.text);
 
-      this.notionManager.createDatabase(extractedCompanyData, extractedData);
+      this.notionManager.createDatabase(extractedData, extractedMsg);
     } catch (error) {
       console.error("Error fetching the HTML:", error);
     }
