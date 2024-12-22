@@ -1,7 +1,6 @@
 import superagent from "superagent";
 import * as cheerio from "cheerio";
 import { NotionManager, CompanyData, CompanyMessage } from "./notionManager";
-import { Config } from "./config";
 
 /**
  * @summary URLからHTMLを取得し、スクレイピングする
@@ -177,4 +176,3 @@ export class Scraping {
 }
 
 const scraping = new Scraping();
-const config = new Config();
