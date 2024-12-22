@@ -33,7 +33,8 @@ class Main {
   public async run() {
     console.log("StartRun");
 
-    for (let i = 0; i < 5; i++) {
+    let count = this.config.SEARCH_DATA.length;
+    for (let i = 0; i < count; i++) {
       try {
         this.scraping.runScraping(
           this.config.URL_HEAD + this.config.SEARCH_DATA[i].url,
