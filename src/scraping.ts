@@ -4,7 +4,7 @@ import { NotionManager, CompanyData, CompanyMessage } from "./notionManager";
 
 /**
  * @summary URLからHTMLを取得し、スクレイピングする
- *
+ * @constructor NotionManagerを初期化
  * @method fetchPageUrls - 指定されたURLにアクセスし、HTMLからそれぞれのページURLとタイトルを取得する
  * @method runScraping - 指定されたURLからHTMLを取得し、コンテンツを抽出する
  * @method extractContent - HTMLからキャプション、メインタイトル、本文を抽出する

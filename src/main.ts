@@ -1,11 +1,17 @@
 import { Scraping } from "./scraping";
 import { Config } from "./config";
 
+// 遅延処理のキャンセル用ハンドル
 type DelayHandle = {
   cancel: () => void;
 };
 
-// エントリーポイント
+/**
+ * @summary メイン処理を行うクラス
+ * @constructor ConfigとScrapingを初期化
+ * @method run - スクレイピングを実行
+ * @method delay - 遅延処理を行う
+ */
 class Main {
   private config: Config;
 
@@ -21,6 +27,9 @@ class Main {
     this.run();
   }
 
+  /**
+   * @summary スクレイピングを実行
+   */
   public async run() {
     console.log("StartRun");
 
@@ -37,7 +46,12 @@ class Main {
     console.log("EndRun");
   }
 
-  private async delay(ms: number, handle: DelayHandle) {
+  /**
+   * @summary 遅延処理を行う
+   * @param {number} ms
+   * @param {DelayHandle} handle
+   */
+  private delay(ms: number, handle: DelayHandle) {
     return new Promise<void>((resolve, reject) => {
       const timeoutId = setTimeout(() => resolve(), ms);
 
