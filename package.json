@@ -34,8 +34,9 @@
   "scripts": {
     "format": "prettier-eslint --write 'src/**/*.js'",
     "lint": "npx eslint ./src/* -c .ts",
+    "main": "ts-node ./src/main.ts && ts-node ./src/config.ts",
     "dev": "ts-node ./src/scraping.ts && ts-node ./src/config.ts",
-    "test": "ts-node ./src/notionTest.ts && ts-node ./src/config.ts",
+    "notion-test": "ts-node ./src/notionManager.ts && ts-node ./src/config.ts",
     "game": "ts-node ./src/gameMakerTest.ts"
   },
   "keywords": [],
