@@ -13,7 +13,7 @@ import { Config } from "./config";
  */
 export class Scraping {
   private readonly notionManager: NotionManager;
-  private pageUrls: { url: string; pageName: string }[] = [];
+  public pageUrls: { url: string; pageName: string }[] = [];
 
   constructor() {
     this.notionManager = new NotionManager();
@@ -57,7 +57,10 @@ export class Scraping {
       const extractedMsg = this.extractContent(html.text);
 
       // 会社データを抽出する
-      const extractedData = this.extractCompanyData(html.text);
+      const extractedData = this.extractCompanyData(
+        html.text,
+        pageData.pageName
+      );
 
       this.notionManager.createDatabase(extractedData, extractedMsg);
     } catch (error) {
@@ -108,9 +111,10 @@ export class Scraping {
   /**
    * @summary HTMLから会社データを抽出する
    * @param {string} html - 抽出対象のHTML
+   * @param {string} name - 会社名
    * @returns {CompanyData} - 抽出した会社データ
    */
-  private extractCompanyData(html: string): CompanyData {
+  private extractCompanyData(html: string, name: string): CompanyData {
     const $ = cheerio.load(html);
     const result: Record<string, string | string[]> = {};
 
@@ -157,7 +161,7 @@ export class Scraping {
     // TODO: Validation失敗時の処理を追加
     // validation
     try {
-      results.CompanyName = companyName;
+      results.CompanyName = name;
       results.Establishment = result["設立"] as string;
       results.CapitalStock = result["資本金"] as string;
       results.Location = result["本社所在地"] as string;
