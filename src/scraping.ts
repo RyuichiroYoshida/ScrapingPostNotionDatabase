@@ -1,6 +1,5 @@
 import superagent from "superagent";
 import * as cheerio from "cheerio";
-import { Config } from "./config";
 import { NotionManager, CompanyData, CompanyMessage } from "./notionManager";
 
 /**
@@ -10,23 +9,15 @@ import { NotionManager, CompanyData, CompanyMessage } from "./notionManager";
  * @method extractContent - HTMLからキャプション、メインタイトル、本文を抽出する
  * @method extractCompanyData - HTMLから会社データを抽出する
  */
-class Scraping {
-  private readonly webUrl: string;
-
+export class Scraping {
   private readonly notionManager = new NotionManager();
-
-  // 設定ファイルからパラメータを取得
-  public constructor() {
-    this.webUrl = Config.WEB_URL;
-    this.getRawHtml();
-  }
 
   /**
    * @summary メンバ変数にあるURLからHTMLを取得し、コンテンツを抽出しログに出力する
    */
-  private async getRawHtml() {
+  public async getRawHtml(webUrl: string) {
     try {
-      const result = await superagent.get(this.webUrl);
+      const result = await superagent.get(webUrl);
 
       // キャプション、メインタイトル、本文を抽出する
       const extractedData = this.extractContent(result.text);
@@ -132,6 +123,7 @@ class Scraping {
     // 会社名を抽出
     const companyName = $("#companyHead .heading1 h1").text().trim();
 
+    // TODO: Validation失敗時の処理を追加
     // validation
     try {
       results.CompanyName = companyName;
@@ -148,5 +140,4 @@ class Scraping {
   }
 }
 
-const params = new Config();
 const scraping = new Scraping();
